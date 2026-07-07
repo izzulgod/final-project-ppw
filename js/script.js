@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore';
                 
                 if(!greetingElement.textContent.includes(greeting)){
-                     greetingElement.innerHTML = `${greeting}, <strong>Admin Gudang</strong> 👋`;
+                     greetingElement.innerHTML = `${greeting}, <strong>Admin Gudang</strong>`;
                 }
             }
         };
