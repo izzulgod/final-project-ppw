@@ -47,13 +47,18 @@ Proyek ini memiliki struktur halaman berikut:
 ### 3. Integrasi LocalStorage (Persistensi Data)
 - **Data Default** : Sistem otomatis mengisi data inventaris awal jika LocalStorage masih kosong.
 - **CRUD Statis** : Penambahan, pembaruan (Edit), dan penghapusan (Delete) barang tersimpan secara permanen di browser pengguna.
+- **Persistent SKU Counter** : Menggunakan counter `nexaSkuCounter` di LocalStorage agar penomoran otomatis tidak mengalami duplikasi atau mundur jika barang dengan SKU terakhir dihapus.
 - **Pesan Kontak** : Kiriman pesan dari formulir kontak disimpan langsung ke dalam LocalStorage.
 
 ### 4. Empat (4) Blok Kode JavaScript
 Logika JavaScript disimpan pada file tunggal script.js dan terbagi ke dalam 4 fungsionalitas utama:
 1. **Real-time Clock, Sapaan Dinamis & Statistik Dashboard** : Menampilkan jam digital real-time, sapaan dinamis berdasarkan waktu lokal (pagi/siang/sore/malam), serta kalkulasi statistik stok barang secara langsung (Total Barang, Stok Aman, Hampir Habis, dan Kosong).
-2. **Table Rendering, Search Filter, Edit & Delete** : Merender data barang secara dinamis ke tabel HTML, menyaring baris berdasarkan kata kunci pencarian secara instan, mengedit detail barang via Bootstrap Modal, serta menghapus barang dengan dialog konfirmasi.
-3. **Form Validation & Add Item** : Melakukan validasi input form (nama barang wajib diisi, kategori wajib dipilih, stok tidak boleh negatif, harga valid), menampilkan notifikasi alert Bootstrap yang anggun, dan menyimpan barang baru ke LocalStorage dengan pembuatan SKU otomatis (`SKU-XXXX`).
+2. **Table Rendering, Search Filter, Interactive Sorting, Edit & Delete** : 
+   - Merender data barang secara dinamis ke tabel HTML.
+   - Menyaring baris berdasarkan kata kunci pencarian secara instan.
+   - **Interactive Sorting** : Mengurutkan barang secara fleksibel berdasarkan Barang Terbaru, Barang Terlama, Kode SKU (A-Z), atau Kode SKU (Z-A).
+   - Mengedit detail barang via Bootstrap Modal dan menghapus barang dengan dialog konfirmasi.
+3. **Form Validation & Add Item (Custom SKU)** : Melakukan validasi input form (termasuk validasi keunikan SKU agar tidak duplikat), menampilkan notifikasi alert Bootstrap, serta memfasilitasi pembuatan barang baru dengan SKU otomatis (`SKU-XXXX`) yang dapat dikustomisasi secara manual oleh pengguna jika diperlukan.
 4. **Contact Form Handling** : Memvalidasi formulir kontak dan menyimpan pesan yang dikirim oleh pengguna ke LocalStorage, lengkap dengan timestamp waktu pengiriman.
 
 ### 5. Tampilan dan Layout Modern dengan CSS
