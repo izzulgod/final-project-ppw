@@ -42,7 +42,7 @@ Proyek ini memiliki struktur halaman berikut:
 - **Image (`<img>`)** : Digunakan di Dashboard (`index.html`) sebagai gambar hero pergudangan.
 - **Table (`<table>`)** : Digunakan di halaman `items.html` untuk menampilkan daftar stok barang.
 - **Form (`<form>`)** : Digunakan pada `add-item.html` untuk menambah barang dan `contact.html` untuk mengirim pesan support.
-- **Video (`<video>`)** : Digunakan di halaman `about.html` untuk menampilkan profil sistem (memakai placeholder).
+- **Video (`<video>`)** : Digunakan di halaman `about.html` untuk menampilkan profil sistem.
 
 ### 3. Tiga (3) Blok Kode JavaScript
 Logika JavaScript disimpan pada file tunggal `js/script.js` agar rapi, dan terbagi ke dalam 3 fungsi utama:

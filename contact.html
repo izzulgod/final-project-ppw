@@ -43,6 +43,7 @@
 
     <!-- Main Content -->
     <main class="container my-5 animate-fade-in">
+        <div id="contactAlertContainer"></div>
         <div class="row justify-content-center">
             <div class="col-md-6 text-center mb-5">
                 <h2 class="fw-bold">Butuh Bantuan?</h2>
@@ -79,20 +80,20 @@
             <div class="col-md-7 mb-4">
                 <div class="card border-0 h-100">
                     <div class="card-body p-4">
-                        <form action="index.html" method="GET">
+                        <form id="contactForm">
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Nama Lengkap</label>
-                                    <input type="text" class="form-control" placeholder="Nama Anda" required>
+                                    <input type="text" id="contactName" class="form-control" placeholder="Nama Anda" required>
                                 </div>
                                 <div class="col-md-6 mt-3 mt-md-0">
                                     <label class="form-label">Alamat Email</label>
-                                    <input type="email" class="form-control" placeholder="email@contoh.com" required>
+                                    <input type="email" id="contactEmail" class="form-control" placeholder="email@contoh.com" required>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Pesan / Kendala</label>
-                                <textarea class="form-control" rows="4" placeholder="Jelaskan detail kendala yang dialami..." required></textarea>
+                                <textarea id="contactMessage" class="form-control" rows="4" placeholder="Jelaskan detail kendala yang dialami..." required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary w-100"><i class="bi bi-send me-2"></i> Kirim Pesan</button>
                         </form>

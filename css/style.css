@@ -199,3 +199,68 @@ footer {
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
 }
+
+/* Custom Premium Alert Styling */
+.custom-alert {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  animation: slideDownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideDownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-alert-success {
+  background-color: #ECFDF5;
+  border-color: #A7F3D0;
+  color: #065F46;
+}
+
+.custom-alert-danger {
+  background-color: #FEF2F2;
+  border-color: #FECACA;
+  color: #991B1B;
+}
+
+.custom-alert .alert-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.custom-alert .alert-content {
+  flex-grow: 1;
+}
+
+.custom-alert .btn-close-custom {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: currentColor;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-alert .btn-close-custom:hover {
+  opacity: 1;
+}

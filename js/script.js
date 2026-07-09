@@ -230,9 +230,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (!isValid) {
                 alertContainer.innerHTML = `
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>Gagal!</strong> ${errorMessage}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <div class="custom-alert custom-alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill alert-icon"></i>
+                        <div class="alert-content">
+                            <strong>Gagal!</strong> ${errorMessage}
+                        </div>
+                        <button type="button" class="btn-close-custom" onclick="this.parentElement.remove()" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
                     </div>
                 `;
             } else {
@@ -254,12 +259,91 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveToLocalStorage(inventoryData);
 
                 alertContainer.innerHTML = `
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <strong>Berhasil!</strong> Barang "${itemName}" telah ditambahkan dengan ${newSku}. <a href="items.html" class="alert-link">Lihat Daftar Barang</a>.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <div class="custom-alert custom-alert-success" role="alert">
+                        <i class="bi bi-check-circle-fill alert-icon"></i>
+                        <div class="alert-content">
+                            <strong>Berhasil!</strong> Barang "${itemName}" telah ditambahkan dengan <strong>${newSku}</strong>. <a href="items.html" class="alert-link text-decoration-none fw-bold" style="color: #047857;">Lihat Daftar Barang &rarr;</a>
+                        </div>
+                        <button type="button" class="btn-close-custom" onclick="this.parentElement.remove()" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
                     </div>
                 `;
                 addItemForm.reset();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // ---------------------------------------------------------
+    // LOGIC 4: Contact Form Handling
+    // ---------------------------------------------------------
+    const contactForm = document.getElementById('contactForm');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const contactName = document.getElementById('contactName').value.trim();
+            const contactEmail = document.getElementById('contactEmail').value.trim();
+            const contactMessage = document.getElementById('contactMessage').value.trim();
+            const alertContainer = document.getElementById('contactAlertContainer');
+
+            let isValid = true;
+            let errorMessage = '';
+
+            if (contactName === '') {
+                isValid = false;
+                errorMessage = 'Nama lengkap tidak boleh kosong.';
+            } else if (contactEmail === '') {
+                isValid = false;
+                errorMessage = 'Alamat email tidak boleh kosong.';
+            } else if (contactMessage === '') {
+                isValid = false;
+                errorMessage = 'Pesan atau kendala tidak boleh kosong.';
+            }
+
+            if (!isValid) {
+                if (alertContainer) {
+                    alertContainer.innerHTML = `
+                        <div class="custom-alert custom-alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill alert-icon"></i>
+                            <div class="alert-content">
+                                <strong>Gagal!</strong> ${errorMessage}
+                            </div>
+                            <button type="button" class="btn-close-custom" onclick="this.parentElement.remove()" aria-label="Close">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            } else {
+                // Save messages to LocalStorage
+                const contactMessages = JSON.parse(localStorage.getItem('nexaContactMessages')) || [];
+                const newMessage = {
+                    id: Date.now(),
+                    name: contactName,
+                    email: contactEmail,
+                    message: contactMessage,
+                    date: new Date().toISOString()
+                };
+                contactMessages.push(newMessage);
+                localStorage.setItem('nexaContactMessages', JSON.stringify(contactMessages));
+
+                if (alertContainer) {
+                    alertContainer.innerHTML = `
+                        <div class="custom-alert custom-alert-success" role="alert">
+                            <i class="bi bi-check-circle-fill alert-icon"></i>
+                            <div class="alert-content">
+                                <strong>Berhasil!</strong> Pesan Anda telah terkirim. Terima kasih atas masukan Anda!
+                            </div>
+                            <button type="button" class="btn-close-custom" onclick="this.parentElement.remove()" aria-label="Close">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+                contactForm.reset();
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
