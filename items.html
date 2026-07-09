@@ -50,12 +50,24 @@
 
         <div class="card border-0 mb-4">
             <div class="card-body p-4">
-                <div class="row mb-4">
-                    <div class="col-md-6">
+                <div class="row mb-4 g-3">
+                    <div class="col-md-7 col-lg-8">
                         <!-- Search Input for JS Logic -->
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
                             <input type="text" id="searchItem" class="form-control border-start-0 ps-0" placeholder="Cari berdasarkan nama atau kode barang...">
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-lg-4">
+                        <!-- Sort Select Input -->
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="bi bi-sort-down text-muted"></i></span>
+                            <select id="sortItem" class="form-select">
+                                <option value="newest" selected>Urutan: Barang Terbaru</option>
+                                <option value="oldest">Urutan: Barang Terlama</option>
+                                <option value="sku-asc">Urutan: Kode SKU (A - Z)</option>
+                                <option value="sku-desc">Urutan: Kode SKU (Z - A)</option>
+                            </select>
                         </div>
                     </div>
                 </div>

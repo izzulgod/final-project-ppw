@@ -20,6 +20,22 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('nexaInventory', JSON.stringify(inventoryData));
     }
 
+    // Initialize SKU counter
+    let skuCounter = localStorage.getItem('nexaSkuCounter');
+    if (!skuCounter) {
+        // Find the maximum SKU number in current inventory data
+        const maxVal = inventoryData.length > 0
+            ? Math.max(...inventoryData.map(i => {
+                const match = i.sku.match(/\d+/);
+                return match ? parseInt(match[0]) : 1000;
+              }))
+            : 1000;
+        skuCounter = maxVal + 1;
+        localStorage.setItem('nexaSkuCounter', skuCounter);
+    } else {
+        skuCounter = parseInt(skuCounter);
+    }
+
     // Helper functions
     const saveToLocalStorage = (data) => {
         localStorage.setItem('nexaInventory', JSON.stringify(data));
@@ -131,6 +147,38 @@ document.addEventListener('DOMContentLoaded', () => {
         attachTableActionListeners();
     };
 
+    const sortInput = document.getElementById('sortItem');
+
+    const getProcessedData = () => {
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        const sortBy = sortInput ? sortInput.value : 'newest';
+
+        // 1. Filter
+        let data = inventoryData.filter(item => 
+            item.name.toLowerCase().includes(searchTerm) || 
+            item.sku.toLowerCase().includes(searchTerm)
+        );
+
+        // 2. Sort
+        if (sortBy === 'newest') {
+            data = [...data].reverse();
+        } else if (sortBy === 'oldest') {
+            // Keep original order
+        } else if (sortBy === 'sku-asc') {
+            data.sort((a, b) => a.sku.localeCompare(b.sku, undefined, { numeric: true, sensitivity: 'base' }));
+        } else if (sortBy === 'sku-desc') {
+            data.sort((a, b) => b.sku.localeCompare(a.sku, undefined, { numeric: true, sensitivity: 'base' }));
+        }
+
+        return data;
+    };
+
+    const updateTable = () => {
+        if (tableBody) {
+            renderTable(getProcessedData());
+        }
+    };
+
     const attachTableActionListeners = () => {
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -138,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (confirm(`Apakah Anda yakin ingin menghapus barang dengan SKU ${sku}?`)) {
                     const newData = inventoryData.filter(item => item.sku !== sku);
                     saveToLocalStorage(newData);
-                    renderTable(newData);
+                    updateTable();
                 }
             });
         });
@@ -161,19 +209,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial render
     if (tableBody) {
-        renderTable(inventoryData);
+        updateTable();
     }
 
-    // Search filter logic
+    // Search and Sort filter logic
     if (searchInput && tableBody) {
-        searchInput.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredData = inventoryData.filter(item => 
-                item.name.toLowerCase().includes(searchTerm) || 
-                item.sku.toLowerCase().includes(searchTerm)
-            );
-            renderTable(filteredData);
-        });
+        searchInput.addEventListener('input', updateTable);
+    }
+    if (sortInput && tableBody) {
+        sortInput.addEventListener('change', updateTable);
     }
 
     // Save Edit logic
@@ -189,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 inventoryData[itemIndex].price = parseInt(document.getElementById('editItemPrice').value);
                 
                 saveToLocalStorage(inventoryData);
-                renderTable(inventoryData);
+                updateTable();
                 editModalInstance.hide();
             }
         });
@@ -199,11 +243,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // LOGIC 3: Form Validation & Add to LocalStorage
     // ---------------------------------------------------------
     const addItemForm = document.getElementById('addItemForm');
+    const itemSkuInput = document.getElementById('itemSku');
+    
+    if (addItemForm && itemSkuInput) {
+        // Pre-fill SKU
+        itemSkuInput.value = `SKU-${skuCounter}`;
+
+        // Reset handling to restore auto SKU
+        addItemForm.addEventListener('reset', () => {
+            setTimeout(() => {
+                itemSkuInput.value = `SKU-${skuCounter}`;
+            }, 0);
+        });
+    }
     
     if (addItemForm) {
         addItemForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
+            const itemSku = itemSkuInput ? itemSkuInput.value.trim() : '';
             const itemName = document.getElementById('itemName').value.trim();
             const itemCategory = document.getElementById('itemCategory').value;
             const itemStock = parseInt(document.getElementById('itemStock').value);
@@ -212,7 +270,13 @@ document.addEventListener('DOMContentLoaded', () => {
             let isValid = true;
             let errorMessage = '';
 
-            if (itemName === '') {
+            if (itemSku === '') {
+                isValid = false;
+                errorMessage = 'Kode SKU tidak boleh kosong.';
+            } else if (inventoryData.some(item => item.sku.toLowerCase() === itemSku.toLowerCase())) {
+                isValid = false;
+                errorMessage = `Kode SKU "${itemSku}" sudah digunakan. Silakan masukkan SKU unik lain.`;
+            } else if (itemName === '') {
                 isValid = false;
                 errorMessage = 'Nama barang tidak boleh kosong.';
             } else if (itemCategory === '') {
@@ -241,19 +305,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             } else {
-                // Generate next SKU
-                const nextSkuNumber = inventoryData.length > 0 
-                    ? Math.max(...inventoryData.map(i => parseInt(i.sku.split('-')[1]))) + 1 
-                    : 1001;
-                const newSku = `SKU-${nextSkuNumber}`;
-
                 const newItem = {
-                    sku: newSku,
+                    sku: itemSku,
                     name: itemName,
                     category: itemCategory,
                     stock: itemStock,
                     price: itemPrice
                 };
+
+                // Update SKU Counter if user used the generated SKU or a higher SKU prefix
+                if (itemSku === `SKU-${skuCounter}`) {
+                    skuCounter++;
+                    localStorage.setItem('nexaSkuCounter', skuCounter);
+                } else {
+                    const match = itemSku.match(/^SKU-(\d+)$/i);
+                    if (match) {
+                        const num = parseInt(match[1]);
+                        if (num >= skuCounter) {
+                            skuCounter = num + 1;
+                            localStorage.setItem('nexaSkuCounter', skuCounter);
+                        }
+                    }
+                }
 
                 inventoryData.push(newItem);
                 saveToLocalStorage(inventoryData);
@@ -262,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="custom-alert custom-alert-success" role="alert">
                         <i class="bi bi-check-circle-fill alert-icon"></i>
                         <div class="alert-content">
-                            <strong>Berhasil!</strong> Barang "${itemName}" telah ditambahkan dengan <strong>${newSku}</strong>. <a href="items.html" class="alert-link text-decoration-none fw-bold" style="color: #047857;">Lihat Daftar Barang &rarr;</a>
+                            <strong>Berhasil!</strong> Barang "${itemName}" telah ditambahkan dengan SKU <strong>${itemSku}</strong>. <a href="items.html" class="alert-link text-decoration-none fw-bold" style="color: #047857;">Lihat Daftar Barang &rarr;</a>
                         </div>
                         <button type="button" class="btn-close-custom" onclick="this.parentElement.remove()" aria-label="Close">
                             <i class="bi bi-x-lg"></i>
