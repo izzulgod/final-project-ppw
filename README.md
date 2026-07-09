@@ -63,10 +63,5 @@ Tampilan diperindah menggunakan file CSS khusus style.css untuk:
 - Interaksi modern berupa *soft shadows*, transisi mulus saat *hover* tombol/kartu, dan kustomisasi gaya Alert.
 - Micro-animations seperti efek transisi `fade-in` saat memuat halaman.
 
-## Cara Menjalankan Project
-1. Ekstrak atau *clone* direktori proyek ini.
-2. Buka folder proyek.
-3. *Double-click* atau buka file `index.html` menggunakan browser modern (Chrome, Edge, Firefox, dll.).
-
 ---
 *Dokumentasi ini disusun untuk mempermudah saat demo presentasi UAS.*
